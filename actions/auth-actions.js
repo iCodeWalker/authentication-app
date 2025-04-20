@@ -2,6 +2,7 @@
 
 import { hashUserPassword } from "@/lib/hash";
 import { createUser } from "@/lib/user";
+import { redirect } from "next/navigation";
 
 export async function signUp(prevState, formData) {
   const email = formData.get("email");
@@ -10,7 +11,7 @@ export async function signUp(prevState, formData) {
   // ########### validate user input ##############
 
   let errors = {};
-  if (!email.includes("@")) {
+  if (!email.includes("@") || !email.includes(".")) {
     errors.email = "Please enter a valid email address.";
   }
 
@@ -34,5 +35,21 @@ export async function signUp(prevState, formData) {
 
   // #### using function to create a hashed password
   const hashedPassword = hashUserPassword(password);
-  createUser(email, hashUserPassword);
+
+  // ############ Checking for duplicate email ############
+
+  try {
+    createUser(email, hashUserPassword);
+  } catch (error) {
+    if (error.code === "SQLITE_CONSTRAINT_UNIQUE") {
+      return {
+        errors: {
+          email: "User with this email already exists",
+        },
+      };
+    }
+    throw error;
+  }
+
+  redirect("/training");
 }
