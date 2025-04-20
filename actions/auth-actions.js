@@ -39,7 +39,7 @@ export async function signUp(prevState, formData) {
   // ############ Checking for duplicate email ############
 
   try {
-    createUser(email, hashUserPassword);
+    createUser(email, hashedPassword);
   } catch (error) {
     if (error.code === "SQLITE_CONSTRAINT_UNIQUE") {
       return {
