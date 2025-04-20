@@ -1,5 +1,6 @@
 "use server";
 
+import { hashUserPassword } from "@/lib/hash";
 import { createUser } from "@/lib/user";
 
 export async function signUp(prevState, formData) {
@@ -29,5 +30,9 @@ export async function signUp(prevState, formData) {
   // We should never save password as plain text in the database.
 
   // We should hash the password and than store it into the database
-  createUser(email, password);
+  //   createUser(email, password);
+
+  // #### using function to create a hashed password
+  const hashedPassword = hashUserPassword(password);
+  createUser(email, hashUserPassword);
 }
